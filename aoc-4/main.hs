@@ -20,9 +20,9 @@ validators = [
              , ("eyr", (\x -> let y = readInt x in y >= 2020 && y <= 2030))
              , ("hgt", isValidHeight) 
              , ("hcl", isHex) 
-             , ("ecl", (\x -> x `elem` eyeColors)) 
+             , ("ecl", (flip elem eyeColors)) 
              , ("pid", (\x -> validNumber x && length x == 9)) 
-             , ("cid", (\_ -> True)) 
+             , ("cid", const True) 
              ]
 
 isValidHeight :: String -> Bool
@@ -34,9 +34,6 @@ isValidHeight str = inRange $ (readInt $ fst splitted, snd splitted)
 
 validNumber :: String -> Bool
 validNumber x = isJust (readMaybe x :: Maybe Int)
-
-takeLast :: Int -> [a] -> [a]
-takeLast i xs = drop ((length xs) - i) xs
 
 readInt :: String -> Int
 readInt = read
