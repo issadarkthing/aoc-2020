@@ -1,3 +1,4 @@
+import Data.List.Split
 import Data.List
 import Text.Read
 import Data.Maybe
@@ -44,24 +45,11 @@ isHex str = head str == '#' && checkHex digits && length digits == 6
           checkHex = foldl (\acc v -> acc && inRange v) True 
           digits = tail str
 
-splitOn :: Char -> String -> [String]
-splitOn delim [] = [""]
-splitOn delim (x:xs)
-    | x == delim = "" : rest
-    | otherwise  = (x: head rest) : tail rest
-    where rest = splitOn delim xs
 
-splitStr :: Eq a => [a] -> [a] -> [[a]]
-splitStr sub str = split' sub str [] []
-    where
-    split' _   []  subacc acc = reverse (reverse subacc:acc)
-    split' sub str subacc acc
-        | sub `isPrefixOf` str = split' sub (drop (length sub) str) [] (reverse subacc:acc)
-        | otherwise            = split' sub (tail str) (head str:subacc) acc
 
 getAttrib :: String -> (String, String)
 getAttrib str = (key, value)
-    where (key:value:_) = splitOn ':' str
+    where (key:value:_) = splitOn ":" str
 
 lookupAttrib :: [(String, String)] -> [Maybe String]
 lookupAttrib xs = map (flip lookup xs) required
@@ -91,7 +79,7 @@ validField (attb, value) = case lookup attb validators of
 
 main :: IO ()
 main = do
-    input <- splitStr "\n\n" <$> readFile "./input.txt"
+    input <- splitOn "\n\n" <$> readFile "./input.txt"
     let passports = generatePassports input
     putStr "Part 1: "
     print $ part1 passports
